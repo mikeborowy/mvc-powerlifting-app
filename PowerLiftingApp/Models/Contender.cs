@@ -17,21 +17,21 @@ namespace PowerLiftingApp.Models
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Bench press weight is required")]
-        [DisplayName("Bench Press Personal Record")]
+        [DisplayName("Bench Press (kg)")]
         [Range(0, 500)]
         public Decimal BenchPress { get; set; }
 
         [Required(ErrorMessage = "Squat weigth is required")]
-        [DisplayName("Squat Personal Record")]
+        [DisplayName("Squat (kg)")]
         [Range(0, 500)]
         public Decimal Squat { get; set; }
 
         [Required(ErrorMessage = "Deadlift is required")]
-        [DisplayName("Deadlift Personal Record")]
+        [DisplayName("Deadlift (kg)")]
         [Range(0, 500)]
         public Decimal Deadlift { get; set; }
 
-        [DisplayName("Total Score")]
+        [DisplayName("Total Score (kg)")]
         public Decimal TotalResult { get; set; }
     }
 }
