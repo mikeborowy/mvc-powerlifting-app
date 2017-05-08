@@ -35,7 +35,7 @@
 
             $('#btnAddContender').click(function (e) {
                 e.preventDefault();
-                $('<label for="contenderName">Rrequired, at least 4 characters</label><input class="form-control" type="text" name="contenderName" minlength="4" maxlength="30" required/><br/>').appendTo(contenders);
+                $('<input class="form-control" type="text" name="contenderName" minlength="4" maxlength="30" required/>').appendTo(contenders);
             });
 
         });
