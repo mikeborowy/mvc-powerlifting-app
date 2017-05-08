@@ -18,75 +18,49 @@ namespace PowerLiftingApp.Controllers
         // GET: Contenders
         public ActionResult Index()
         {
-            //return View(db.Contenders.ToList());
             return View();
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Index(string[] contenderName)
         {
-            using (db)
+            if (contenderName != null || contenderName.Length != 0)
             {
-                if (contenderName != null || contenderName.Length != 0)
+                foreach (var name in contenderName)
                 {
-                    foreach (var name in contenderName)
+                    Contender contender = new Contender()
                     {
-                        Contender contender = new Contender()
-                        {
-                            Name = name,
-                            BenchPress = 0,
-                            Squat = 0,
-                            Deadlift = 0
-                        };
+                        Name = name,
+                        BenchPress = 0,
+                        Squat = 0,
+                        Deadlift = 0,
+                        TotalResult = 0
+                    };
 
-                        db.Contenders.Add(contender);
-                    }
-
-                    db.SaveChanges();
+                    db.Contenders.Add(contender);
                 }
 
+                db.SaveChanges();
             }
-            //return View(db.Contenders.ToList());
-            
-            return RedirectToAction("List");
+
+            return RedirectToAction("Records");
         }
 
-        // GET: Contenders/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Records()
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Contender contender = db.Contenders.Find(id);
-            if (contender == null)
-            {
-                return HttpNotFound();
-            }
-            return View(contender);
+            return View(db.Contenders.ToList());
+        }
+
+        public ActionResult Results()
+        {
+            return View(db.Contenders.ToList().OrderByDescending(r => r.TotalResult));
         }
 
         // GET: Contenders/Create
         public ActionResult Create()
         {
             return View();
-        }
-
-        // POST: Contenders/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,BenchPress,Squat,Deadlift")] Contender contender)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Contenders.Add(contender);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(contender);
         }
 
         // GET: Contenders/Edit/5
@@ -105,45 +79,28 @@ namespace PowerLiftingApp.Controllers
         }
 
         // POST: Contenders/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,BenchPress,Squat,Deadlift")] Contender contender)
+        public ActionResult Edit([Bind(Include = "Id,Name,BenchPress,Squat,Deadlift")] Contender updatedContender)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(contender).State = EntityState.Modified;
+
+                db.Contenders.Attach(updatedContender);
+                var entry = db.Entry(updatedContender);
+                entry.State = EntityState.Modified;
+
+                if (entry.Property(r => r.BenchPress).IsModified ||
+                    entry.Property(r => r.Squat).IsModified ||
+                    entry.Property(r => r.Deadlift).IsModified)
+                {
+                    entry.Entity.TotalResult = entry.Entity.BenchPress + entry.Entity.Squat + entry.Entity.Deadlift;
+                }
+
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Records");
             }
-            return View(contender);
-        }
-
-        // GET: Contenders/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Contender contender = db.Contenders.Find(id);
-            if (contender == null)
-            {
-                return HttpNotFound();
-            }
-            return View(contender);
-        }
-
-        // POST: Contenders/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Contender contender = db.Contenders.Find(id);
-            db.Contenders.Remove(contender);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            return View(updatedContender);
         }
 
         protected override void Dispose(bool disposing)

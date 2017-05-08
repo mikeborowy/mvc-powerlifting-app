@@ -12,7 +12,6 @@ namespace PowerLiftingApp.Models
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Contender Name is required")]
         [DisplayName("Contender Name")]
         [StringLength(30, MinimumLength = 4)]
         public string Name { get; set; }
@@ -31,5 +30,8 @@ namespace PowerLiftingApp.Models
         [DisplayName("Deadlift Personal Record")]
         [Range(0, 500)]
         public Decimal Deadlift { get; set; }
+
+        [DisplayName("Total Score")]
+        public Decimal TotalResult { get; set; }
     }
 }
