@@ -57,12 +57,6 @@ namespace PowerLiftingApp.Controllers
             return View(db.Contenders.ToList().OrderByDescending(r => r.TotalResult));
         }
 
-        // GET: Contenders/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
         // GET: Contenders/Edit/5
         public ActionResult Edit(int? id)
         {
